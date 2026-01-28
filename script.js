@@ -315,7 +315,7 @@ function updateRoundEntry() {
     `).join('');
 
     scoreInputs.innerHTML = game.players.map(player => `
-        <td>
+        <td data-player="${player}">
             <input 
                 type="number" 
                 id="score-${player}" 
@@ -337,10 +337,10 @@ function updateRoundEntry() {
 
 // Update rounds history
 function updateRoundsHistory() {
-    const history = document.getElementById('roundsHistory');
+    const historyWrapper = document.getElementById('roundsHistoryWrapper');
 
     if (game.rounds.length === 0 && game.bonuses.length === 0) {
-        history.innerHTML = '<p class="empty-message">De Rundeverlauf isch no leer. Füg dini erschte Rundi obe i!</p>';
+        historyWrapper.innerHTML = '<p class="empty-message">De Rundeverlauf isch no leer. Füg dini erschte Rundi obe i!</p>';
         return;
     }
 
@@ -436,7 +436,7 @@ function updateRoundsHistory() {
     }
 
     tableHtml += '</tbody></table>';
-    history.innerHTML = tableHtml;
+    historyWrapper.innerHTML = tableHtml;
 }
 
 // Enter edit mode for a round

@@ -562,6 +562,53 @@ button {
     box-shadow: 0 0 8px rgba(74, 157, 111, 0.2);
 }
 
+/* Mobile card layout for entry table */
+@media (max-width: 768px) {
+    .entry-table {
+        display: block;
+        border: none;
+        box-shadow: none;
+    }
+
+    .entry-table thead {
+        display: none;
+    }
+
+    .entry-table tbody {
+        display: grid;
+        gap: 15px;
+    }
+
+    .entry-table tr {
+        display: grid;
+        grid-template-columns: 1fr;
+        background: #3a3a3a;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .entry-table td {
+        border: none;
+        padding: 12px;
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        align-items: center;
+        border-bottom: none;
+    }
+
+    .entry-table td::before {
+        content: attr(data-player);
+        font-weight: bold;
+        color: #a8d5ba;
+        margin-right: 10px;
+    }
+
+    .entry-table input {
+        width: 100%;
+    }
+}
+
 .submit-btn {
     background: #4a9d6f;
     color: #1a1a1a;
@@ -592,6 +639,13 @@ button {
     font-size: 1.5em;
 }
 
+.history-table-wrapper {
+    overflow-x: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    -webkit-overflow-scrolling: touch;
+}
+
 .history-table {
     width: 100%;
     border-collapse: collapse;
@@ -599,11 +653,15 @@ button {
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    min-width: 600px;
 }
 
 .history-table thead {
     background: #4a9d6f;
     color: #1a1a1a;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .history-table th {
@@ -611,6 +669,7 @@ button {
     text-align: center;
     font-weight: bold;
     border-bottom: 2px solid #555;
+    white-space: nowrap;
 }
 
 .history-table td {
@@ -626,16 +685,27 @@ button {
     text-align: left;
     padding-left: 15px;
     color: #a8d5ba;
+    min-width: 100px;
+    position: sticky;
+    left: 0;
+    z-index: 5;
 }
 
 .history-table .total-col {
     background: #2d2d2d;
     font-weight: bold;
     color: #7ec990;
+    position: sticky;
+    right: 80px;
+    z-index: 5;
 }
 
 .history-table .action-col {
     background: #2d2d2d;
+    position: sticky;
+    right: 0;
+    z-index: 5;
+    min-width: 80px;
 }
 
 .correct-btn {
@@ -648,6 +718,7 @@ button {
     font-weight: bold;
     font-size: 0.9em;
     transition: all 0.3s;
+    white-space: nowrap;
 }
 
 .correct-btn:hover {
@@ -707,6 +778,7 @@ button {
     font-size: 0.9em;
     margin-right: 5px;
     transition: all 0.3s;
+    white-space: nowrap;
 }
 
 .save-btn:hover {
@@ -725,6 +797,7 @@ button {
     font-weight: bold;
     font-size: 0.9em;
     transition: all 0.3s;
+    white-space: nowrap;
 }
 
 .cancel-btn:hover {
@@ -764,6 +837,107 @@ button {
     font-style: italic;
 }
 
+/* Mobile card layout for history table */
+@media (max-width: 768px) {
+    .history-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 8px;
+    }
+
+    .history-table {
+        min-width: 100%;
+        display: block;
+    }
+
+    .history-table thead {
+        background: #4a9d6f;
+        display: grid;
+        grid-template-columns: 120px repeat(2, 1fr) 70px;
+        gap: 10px;
+        padding: 15px;
+        border-radius: 8px 8px 0 0;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .history-table th {
+        padding: 10px 8px;
+        border-bottom: none;
+        font-size: 0.9em;
+    }
+
+    .history-table tbody {
+        display: grid;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .history-table tr {
+        display: grid;
+        grid-template-columns: 120px repeat(2, 1fr) 70px;
+        gap: 10px;
+        background: #3a3a3a;
+        border-radius: 8px;
+        padding: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        border: none;
+    }
+
+    .history-table .round-col {
+        position: unset;
+        background: transparent;
+        font-size: 0.95em;
+        padding: 0;
+        border: none;
+    }
+
+    .history-table .action-col {
+        position: unset;
+        background: transparent;
+        border: none;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .history-table .total-col {
+        position: unset;
+        background: transparent;
+        border: none;
+    }
+
+    .history-table td {
+        border: none;
+        padding: 8px;
+        background: #2d2d2d;
+        border-radius: 6px;
+        color: #e8e8e8;
+        font-size: 0.9em;
+    }
+
+    .history-table .bonus-row {
+        background: #3a4a3a;
+    }
+
+    .history-table .bonus-row td {
+        background: rgba(58, 74, 58, 0.5);
+    }
+
+    .correct-btn {
+        padding: 6px 10px;
+        font-size: 0.8em;
+    }
+
+    .edit-score-input,
+    .edit-bonus-input {
+        font-size: 0.9em;
+        padding: 6px;
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     header h1 {
@@ -782,12 +956,29 @@ button {
         min-width: 100%;
     }
 
-    .entry-table {
-        font-size: 0.9em;
+    body {
+        padding: 10px;
     }
 
-    .entry-table th,
-    .entry-table td {
-        padding: 8px;
+    .container {
+        border-radius: 10px;
+    }
+
+    .entry-section,
+    .history-section,
+    .setup-section {
+        padding: 20px;
+    }
+
+    .bonus-controls {
+        flex-direction: column;
+    }
+
+    .bonus-group {
+        width: 100%;
+    }
+
+    .bonus-btn {
+        width: 100%;
     }
 }
