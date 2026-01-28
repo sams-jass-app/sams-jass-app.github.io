@@ -653,7 +653,7 @@ button {
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    min-width: 600px;
+    min-width: 100%;
 }
 
 .history-table thead {
@@ -672,6 +672,18 @@ button {
     white-space: nowrap;
 }
 
+.history-table th.player-col {
+    text-align: left;
+    padding-left: 15px;
+    position: sticky;
+    left: 0;
+    z-index: 11;
+}
+
+.history-table th.round-col {
+    min-width: 100px;
+}
+
 .history-table td {
     padding: 12px;
     text-align: center;
@@ -679,33 +691,22 @@ button {
     color: #e8e8e8;
 }
 
-.history-table .round-col {
+.history-table td.player-col {
     font-weight: bold;
     background: #2d2d2d;
     text-align: left;
     padding-left: 15px;
     color: #a8d5ba;
-    min-width: 100px;
     position: sticky;
     left: 0;
     z-index: 5;
+    min-width: 120px;
 }
 
-.history-table .total-col {
-    background: #2d2d2d;
-    font-weight: bold;
-    color: #7ec990;
-    position: sticky;
-    right: 80px;
-    z-index: 5;
-}
-
-.history-table .action-col {
-    background: #2d2d2d;
-    position: sticky;
-    right: 0;
-    z-index: 5;
-    min-width: 80px;
+.history-table td.bonus-cell {
+    color: #c8e6c9;
+    font-style: italic;
+    font-size: 0.85em;
 }
 
 .correct-btn {
@@ -824,12 +825,6 @@ button {
     color: #a8d5ba;
 }
 
-.bonus-cell {
-    color: #c8e6c9;
-    font-style: italic;
-    font-size: 0.85em;
-}
-
 .empty-message {
     text-align: center;
     color: #666;
@@ -847,83 +842,34 @@ button {
 
     .history-table {
         min-width: 100%;
-        display: block;
+        display: table;
     }
 
     .history-table thead {
         background: #4a9d6f;
-        display: grid;
-        grid-template-columns: 120px repeat(2, 1fr) 70px;
-        gap: 10px;
-        padding: 15px;
-        border-radius: 8px 8px 0 0;
-        position: sticky;
-        top: 0;
-        z-index: 10;
     }
 
     .history-table th {
         padding: 10px 8px;
-        border-bottom: none;
-        font-size: 0.9em;
+        font-size: 0.85em;
     }
 
-    .history-table tbody {
-        display: grid;
-        gap: 15px;
-        padding: 15px;
-    }
-
-    .history-table tr {
-        display: grid;
-        grid-template-columns: 120px repeat(2, 1fr) 70px;
-        gap: 10px;
-        background: #3a3a3a;
-        border-radius: 8px;
-        padding: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-        border: none;
-    }
-
-    .history-table .round-col {
-        position: unset;
-        background: transparent;
-        font-size: 0.95em;
-        padding: 0;
-        border: none;
-    }
-
-    .history-table .action-col {
-        position: unset;
-        background: transparent;
-        border: none;
-        padding: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .history-table .total-col {
-        position: unset;
-        background: transparent;
-        border: none;
+    .history-table th.player-col {
+        position: sticky;
+        left: 0;
+        z-index: 11;
     }
 
     .history-table td {
-        border: none;
-        padding: 8px;
-        background: #2d2d2d;
-        border-radius: 6px;
-        color: #e8e8e8;
+        padding: 10px 8px;
         font-size: 0.9em;
     }
 
-    .history-table .bonus-row {
-        background: #3a4a3a;
-    }
-
-    .history-table .bonus-row td {
-        background: rgba(58, 74, 58, 0.5);
+    .history-table td.player-col {
+        position: sticky;
+        left: 0;
+        z-index: 5;
+        min-width: 100px;
     }
 
     .correct-btn {
@@ -933,7 +879,7 @@ button {
 
     .edit-score-input,
     .edit-bonus-input {
-        font-size: 0.9em;
+        font-size: 0.85em;
         padding: 6px;
     }
 }

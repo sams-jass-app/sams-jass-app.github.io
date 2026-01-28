@@ -344,35 +344,58 @@ function updateRoundsHistory() {
         return;
     }
 
-    // Create table header
-    let tableHtml = '<table class="history-table"><thead><tr><th>Entry</th>';
+    // Create table header with rounds as columns
+    let tableHtml = '<table class="history-table"><thead><tr><th class="player-col"></th>';
+
+    // Get all unique round numbers
+    const roundNumbers = new Set();
+    game.rounds.forEach(r => roundNumbers.add(r.roundNumber));
+    const sortedRounds = Array.from(roundNumbers).sort((a, b) => a - b);
+
+    // Add round headers
+    sortedRounds.forEach(roundNum => {
+        tableHtml += `<th class="round-col">Rundi ${roundNum}</th>`;
+    });
+
+    tableHtml += '</tr></thead><tbody>';
+
+    // Display each player as a row
     for (const player of game.players) {
-        tableHtml += `<th>${player}</th>`;
-    }
-    tableHtml += '<th>Action</th></tr></thead><tbody>';
+        tableHtml += `<tr><td class="player-col">${player}</td>`;
 
-    // Helper function to display bonuses for a specific round
-    function displayBonusesForRound(roundNum) {
-        const roundBonuses = game.bonuses.filter(b => b.roundNumber === roundNum);
-        if (roundBonuses.length === 0) return '';
+        // For each round, show the score
+        sortedRounds.forEach(roundNum => {
+            const round = game.rounds.find(r => r.roundNumber === roundNum);
+            const score = round && round[player] !== undefined ? round[player] : 0;
+            const roundedScore = Math.ceil(score / 10);
 
-        const bonusEditModeId = `bonus-edit-mode-${roundNum}`;
-        const isBonusEditMode = document.getElementById(bonusEditModeId) && document.getElementById(bonusEditModeId).value === 'true';
+            tableHtml += `<td>${roundedScore}</td>`;
+        });
 
-        let bonusHtml = `<tr class="bonus-row"><td class="round-col bonus-label">Wiis</td>`;
-        for (const player of game.players) {
-            let bonusText = '';
-            const playerBonuses = roundBonuses.filter(b => b.player === player);
-            if (playerBonuses.length > 0) {
-                if (isBonusEditMode) {
-                    bonusText = playerBonuses.map((bonus, idx) => {
-                        const icon = bonus.type === 'handweis' ? '👋' : '🏓';
-                        const value = bonus.value.replace('x2', '0');
-                        const numValue = parseInt(value);
-                        return `<input type="number" class="edit-bonus-input" data-round="${roundNum}" data-player="${player}" data-bonus-idx="${idx}" value="${numValue}" placeholder="0" /> ${icon}`;
-                    }).join(' ');
-                } else {
-                    bonusText = playerBonuses.map(bonus => {
+        tableHtml += '</tr>';
+
+        // Display bonuses row for this player (if any)
+        let playerBonusText = '';
+        sortedRounds.forEach(roundNum => {
+            const roundBonuses = game.bonuses.filter(b => b.roundNumber === roundNum && b.player === player);
+            if (roundBonuses.length > 0) {
+                playerBonusText += roundBonuses.map(bonus => {
+                    const icon = bonus.type === 'handweis' ? '👋' : '🏓';
+                    const value = bonus.value.replace('x2', '0');
+                    const numValue = parseInt(value);
+                    const displayValue = !isNaN(numValue) ? Math.ceil(numValue / 10) : bonus.value;
+                    return `${icon} ${displayValue}`;
+                }).join(', ');
+            }
+        });
+
+        if (playerBonusText || game.bonuses.some(b => b.player === player)) {
+            tableHtml += `<tr class="bonus-row"><td class="player-col bonus-label">Wiis</td>`;
+            sortedRounds.forEach(roundNum => {
+                const roundBonuses = game.bonuses.filter(b => b.roundNumber === roundNum && b.player === player);
+                let bonusText = '';
+                if (roundBonuses.length > 0) {
+                    bonusText = roundBonuses.map(bonus => {
                         const icon = bonus.type === 'handweis' ? '👋' : '🏓';
                         const value = bonus.value.replace('x2', '0');
                         const numValue = parseInt(value);
@@ -380,59 +403,10 @@ function updateRoundsHistory() {
                         return `${icon} ${displayValue}`;
                     }).join(', ');
                 }
-            }
-            bonusHtml += `<td class="bonus-cell">${bonusText}</td>`;
-        }
-
-        if (isBonusEditMode) {
-            bonusHtml += `<td class="action-col"><button onclick="saveBonusEdit(${roundNum})" class="save-btn">Save</button><button onclick="cancelBonusEdit(${roundNum})" class="cancel-btn">Cancel</button><input type="hidden" id="bonus-edit-mode-${roundNum}" value="true" /></td></tr>`;
-        } else {
-            bonusHtml += `<td class="action-col">${roundBonuses.length > 0 ? `<button onclick="enterBonusEditMode(${roundNum})" class="correct-btn">Edit</button>` : ''}<input type="hidden" id="bonus-edit-mode-${roundNum}" value="false" /></td></tr>`;
-        }
-        return bonusHtml;
-    }
-
-    // If there are rounds, display them with their bonuses
-    if (game.rounds.length > 0) {
-        for (let i = 0; i < game.rounds.length; i++) {
-            const round = game.rounds[i];
-            const roundNumber = round.roundNumber;
-
-            // Display bonuses for this round
-            tableHtml += displayBonusesForRound(roundNumber);
-
-            // Display the round row
-            const { roundNumber: _, ...scores } = round;
-            const editModeId = `edit-mode-${roundNumber}`;
-            const isEditMode = document.getElementById(editModeId) && document.getElementById(editModeId).value === 'true';
-
-            tableHtml += `<tr id="round-${roundNumber}"><td class="round-col">Rundi ${roundNumber}</td>`;
-
-            for (const player of game.players) {
-                const score = scores[player] !== undefined ? scores[player] : 0;
-                const roundedScore = Math.ceil(score / 10);
-
-                if (isEditMode) {
-                    tableHtml += `<td><input type="number" class="edit-score-input" data-round="${roundNumber}" data-player="${player}" value="${score}" /></td>`;
-                } else {
-                    tableHtml += `<td>${roundedScore}</td>`;
-                }
-            }
-
-            if (isEditMode) {
-                tableHtml += `<td class="action-col"><button onclick="saveRoundEdit(${roundNumber})" class="save-btn">Save</button><button onclick="cancelRoundEdit(${roundNumber})" class="cancel-btn">Cancel</button><input type="hidden" id="edit-mode-${roundNumber}" value="true" /></td>`;
-            } else {
-                tableHtml += `<td class="action-col"><button onclick="enterEditMode(${roundNumber})" class="correct-btn">Edit</button><input type="hidden" id="edit-mode-${roundNumber}" value="false" /></td>`;
-            }
-
+                tableHtml += `<td class="bonus-cell">${bonusText}</td>`;
+            });
             tableHtml += '</tr>';
         }
-
-        // Also display bonuses for the current round (even if it hasn't been logged yet)
-        tableHtml += displayBonusesForRound(game.currentRound);
-    } else if (game.bonuses.length > 0) {
-        // No rounds yet, but there are bonuses
-        tableHtml += displayBonusesForRound(game.currentRound);
     }
 
     tableHtml += '</tbody></table>';
