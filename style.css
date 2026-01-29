@@ -644,6 +644,7 @@ button {
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     -webkit-overflow-scrolling: touch;
+    overflow-y: visible;
 }
 
 .history-table {
@@ -651,7 +652,6 @@ button {
     border-collapse: collapse;
     background: #3a3a3a;
     border-radius: 8px;
-    overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     min-width: 100%;
 }
@@ -857,7 +857,8 @@ button {
     .history-table th.player-col {
         position: sticky;
         left: 0;
-        z-index: 11;
+        z-index: 12;
+        background: #4a9d6f;
     }
 
     .history-table td {
@@ -870,6 +871,7 @@ button {
         left: 0;
         z-index: 5;
         min-width: 100px;
+        background: #2d2d2d;
     }
 
     .correct-btn {

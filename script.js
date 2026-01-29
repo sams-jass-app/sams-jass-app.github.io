@@ -242,8 +242,16 @@ function updateScoresDisplay() {
     })).sort((a, b) => a.score - b.score);
 
     const rankings = {};
+    let currentRank = 1;
+    let previousScore = null;
+
     playerScores.forEach((item, index) => {
-        rankings[item.player] = index + 1;
+        // If score is different from previous, update rank to current position
+        if (item.score !== previousScore) {
+            currentRank = index + 1;
+            previousScore = item.score;
+        }
+        rankings[item.player] = currentRank;
     });
 
     scoresGrid.innerHTML = game.players.map(player => {
@@ -354,12 +362,18 @@ function updateRoundsHistory() {
     const submittedRounds = new Set();
     game.rounds.forEach(r => submittedRounds.add(r.roundNumber));
 
+    // Check which rounds have bonuses
+    const roundsWithBonuses = new Set();
+    game.bonuses.forEach(b => roundsWithBonuses.add(b.roundNumber));
+
     // Create table header with bonuses and rounds as alternating columns
     let tableHtml = '<table class="history-table"><thead><tr><th class="player-col"></th>';
 
-    // Add bonus and round headers (only show round header if it's submitted)
+    // Add bonus and round headers (only show bonus header if there are bonuses for that round)
     sortedRounds.forEach(roundNum => {
-        tableHtml += `<th class="bonus-col">Wiis ${roundNum}</th>`;
+        if (roundsWithBonuses.has(roundNum)) {
+            tableHtml += `<th class="bonus-col">Wiis ${roundNum}</th>`;
+        }
         if (submittedRounds.has(roundNum)) {
             tableHtml += `<th class="round-col">Rundi ${roundNum}</th>`;
         }
@@ -373,19 +387,21 @@ function updateRoundsHistory() {
 
         // For each round, show the bonus and score (if submitted)
         sortedRounds.forEach(roundNum => {
-            // Bonus column
-            const roundBonuses = game.bonuses.filter(b => b.roundNumber === roundNum && b.player === player);
-            let bonusText = '';
-            if (roundBonuses.length > 0) {
-                bonusText = roundBonuses.map(bonus => {
-                    const icon = bonus.type === 'handweis' ? '👋' : '🏓';
-                    const value = bonus.value.replace('x2', '0');
-                    const numValue = parseInt(value);
-                    const displayValue = !isNaN(numValue) ? Math.ceil(numValue / 10) : bonus.value;
-                    return `${icon} ${displayValue}`;
-                }).join(', ');
+            // Bonus column (only if this round has bonuses)
+            if (roundsWithBonuses.has(roundNum)) {
+                const roundBonuses = game.bonuses.filter(b => b.roundNumber === roundNum && b.player === player);
+                let bonusText = '';
+                if (roundBonuses.length > 0) {
+                    bonusText = roundBonuses.map(bonus => {
+                        const icon = bonus.type === 'handweis' ? '👋' : '🏓';
+                        const value = bonus.value.replace('x2', '0');
+                        const numValue = parseInt(value);
+                        const displayValue = !isNaN(numValue) ? Math.ceil(numValue / 10) : bonus.value;
+                        return `${icon} ${displayValue}`;
+                    }).join(', ');
+                }
+                tableHtml += `<td class="bonus-cell">${bonusText}</td>`;
             }
-            tableHtml += `<td class="bonus-cell">${bonusText}</td>`;
 
             // Score column (only if round is submitted)
             if (submittedRounds.has(roundNum)) {
