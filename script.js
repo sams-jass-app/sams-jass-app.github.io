@@ -176,7 +176,7 @@ function submitRound() {
 
 // Reset the entire game (keeps player names, resets scores and rounds)
 function resetGame() {
-    if (confirm('Are you sure you want to reset scores and rounds? Player names will be kept.')) {
+    if (confirm('Bisch der sicher das spiel neu starte wetsch? D Spielername bliebe erhalte, aber alli pünkt werdend glöscht.')) {
         // Keep players but reset scores and rounds
         const playersToKeep = game.players;
         game = {
@@ -254,7 +254,10 @@ function updateScoresDisplay() {
         rankings[item.player] = currentRank;
     });
 
-    scoresGrid.innerHTML = game.players.map(player => {
+    // Sort players by rank
+    const sortedPlayers = game.players.sort((a, b) => rankings[a] - rankings[b]);
+
+    scoresGrid.innerHTML = sortedPlayers.map(player => {
         const cumulativeScore = game.scores[player];
         const displayScore = Math.ceil(cumulativeScore / 10);
         const lastRoundScore = game.roundScores && game.roundScores[player] ? game.roundScores[player] : 0;
@@ -290,7 +293,7 @@ function updateScoresDisplay() {
                     ${player}
                 </div>
                 <div class="score-value">${displayScore}</div>
-                <div class="last-round-score">Last round: ${displayLastRound}</div>
+                <div class="last-round-score">lest rundi es ${displayLastRound} gschribe</div>
                 <div class="bonus-stats">
                     <span class="handweis-stat">👋 ${displayHandweis}</span>
                     <span class="tischweis-stat">🏓 ${displayTischweis}</span>
@@ -366,6 +369,18 @@ function updateRoundsHistory() {
     const roundsWithBonuses = new Set();
     game.bonuses.forEach(b => roundsWithBonuses.add(b.roundNumber));
 
+    // Check which columns are in edit mode
+    const editBonusMode = new Set();
+    const editScoreMode = new Set();
+    sortedRounds.forEach(roundNum => {
+        if (localStorage.getItem(`bonus-edit-${roundNum}`) === 'true') {
+            editBonusMode.add(roundNum);
+        }
+        if (localStorage.getItem(`score-edit-${roundNum}`) === 'true') {
+            editScoreMode.add(roundNum);
+        }
+    });
+
     // Create table header with bonuses and rounds as alternating columns
     let tableHtml = '<table class="history-table"><thead><tr><th class="player-col"></th>';
 
@@ -390,17 +405,33 @@ function updateRoundsHistory() {
             // Bonus column (only if this round has bonuses)
             if (roundsWithBonuses.has(roundNum)) {
                 const roundBonuses = game.bonuses.filter(b => b.roundNumber === roundNum && b.player === player);
-                let bonusText = '';
-                if (roundBonuses.length > 0) {
-                    bonusText = roundBonuses.map(bonus => {
-                        const icon = bonus.type === 'handweis' ? '👋' : '🏓';
+                let cellContent = '';
+
+                if (editBonusMode.has(roundNum)) {
+                    // Edit mode: show input fields
+                    let bonusValue = '';
+                    if (roundBonuses.length > 0) {
+                        const bonus = roundBonuses[0];
                         const value = bonus.value.replace('x2', '0');
                         const numValue = parseInt(value);
-                        const displayValue = !isNaN(numValue) ? Math.ceil(numValue / 10) : bonus.value;
-                        return `${icon} ${displayValue}`;
-                    }).join(', ');
+                        bonusValue = !isNaN(numValue) ? numValue : 0;
+                    }
+                    cellContent = `<input type="number" class="edit-input" data-round="${roundNum}" data-player="${player}" data-type="bonus" value="${bonusValue}" />`;
+                } else {
+                    // Display mode
+                    let bonusText = '';
+                    if (roundBonuses.length > 0) {
+                        bonusText = roundBonuses.map(bonus => {
+                            const icon = bonus.type === 'handweis' ? '👋' : '🏓';
+                            const value = bonus.value.replace('x2', '0');
+                            const numValue = parseInt(value);
+                            const displayValue = !isNaN(numValue) ? Math.ceil(numValue / 10) : bonus.value;
+                            return `${icon} ${displayValue}`;
+                        }).join(', ');
+                    }
+                    cellContent = bonusText;
                 }
-                tableHtml += `<td class="bonus-cell">${bonusText}</td>`;
+                tableHtml += `<td class="bonus-cell">${cellContent}</td>`;
             }
 
             // Score column (only if round is submitted)
@@ -408,12 +439,41 @@ function updateRoundsHistory() {
                 const round = game.rounds.find(r => r.roundNumber === roundNum);
                 const score = round && round[player] !== undefined ? round[player] : 0;
                 const roundedScore = Math.ceil(score / 10);
-                tableHtml += `<td>${roundedScore}</td>`;
+
+                let cellContent = '';
+                if (editScoreMode.has(roundNum)) {
+                    // Edit mode: show input field
+                    cellContent = `<input type="number" class="edit-input" data-round="${roundNum}" data-player="${player}" data-type="score" value="${score}" />`;
+                } else {
+                    // Display mode
+                    cellContent = roundedScore.toString();
+                }
+                tableHtml += `<td>${cellContent}</td>`;
             }
         });
 
         tableHtml += '</tr>';
     }
+
+    // Add footer row with edit/save buttons
+    tableHtml += `<tr class="edit-footer-row"><td class="player-col"></td>`;
+    sortedRounds.forEach(roundNum => {
+        if (roundsWithBonuses.has(roundNum)) {
+            if (editBonusMode.has(roundNum)) {
+                tableHtml += `<td class="bonus-cell"><button onclick="saveBonusColumn(${roundNum})" class="save-btn">Speichere</button><button onclick="cancelBonusColumn(${roundNum})" class="cancel-btn">Abbruch</button></td>`;
+            } else {
+                tableHtml += `<td class="bonus-cell"><button onclick="enterBonusEditMode(${roundNum})" class="edit-btn">Korrigiere</button></td>`;
+            }
+        }
+        if (submittedRounds.has(roundNum)) {
+            if (editScoreMode.has(roundNum)) {
+                tableHtml += `<td><button onclick="saveScoreColumn(${roundNum})" class="save-btn">Speichere</button><button onclick="cancelScoreColumn(${roundNum})" class="cancel-btn">Abbruch</button></td>`;
+            } else {
+                tableHtml += `<td><button onclick="enterScoreEditMode(${roundNum})" class="edit-btn">Korrigiere</button></td>`;
+            }
+        }
+    });
+    tableHtml += '</tr>';
 
     tableHtml += '</tbody></table>';
     historyWrapper.innerHTML = tableHtml;
@@ -678,4 +738,79 @@ function applyBonus(mode, points) {
     const btn = document.getElementById(`${mode}-btn`);
     btn.classList.remove('active');
     window[`${mode}SelectedPlayer`] = null;
+}
+
+// Enter edit mode for bonus column
+function enterBonusEditMode(roundNumber) {
+    // Store edit mode state for bonus column
+    const editModeId = `bonus-edit-${roundNumber}`;
+    localStorage.setItem(editModeId, 'true');
+    updateUI();
+}
+
+// Enter edit mode for score column
+function enterScoreEditMode(roundNumber) {
+    // Store edit mode state for score column
+    const editModeId = `score-edit-${roundNumber}`;
+    localStorage.setItem(editModeId, 'true');
+    updateUI();
+}
+
+// Save bonus column edits
+function saveBonusColumn(roundNumber) {
+    const inputs = document.querySelectorAll(`input[data-round="${roundNumber}"][data-type="bonus"]`);
+
+    inputs.forEach(input => {
+        const player = input.dataset.player;
+        const value = parseInt(input.value);
+
+        if (!isNaN(value) && value !== 0) {
+            // Remove old bonuses for this player and round
+            game.bonuses = game.bonuses.filter(b => !(b.roundNumber === roundNumber && b.player === player));
+
+            // Add new bonus
+            const displayValue = value > 0 ? `+${value}` : `${value}`;
+            game.bonuses.push({
+                type: value > 0 ? 'tischweis' : 'handweis',
+                player: player,
+                value: displayValue,
+                roundNumber: roundNumber
+            });
+        }
+    });
+
+    localStorage.removeItem(`bonus-edit-${roundNumber}`);
+    saveGame();
+    updateUI();
+}
+
+// Cancel bonus column edits
+function cancelBonusColumn(roundNumber) {
+    localStorage.removeItem(`bonus-edit-${roundNumber}`);
+    updateUI();
+}
+
+// Save score column edits
+function saveScoreColumn(roundNumber) {
+    const inputs = document.querySelectorAll(`input[data-round="${roundNumber}"][data-type="score"]`);
+
+    inputs.forEach(input => {
+        const player = input.dataset.player;
+        const value = parseInt(input.value);
+
+        const roundIndex = game.rounds.findIndex(r => r.roundNumber === roundNumber);
+        if (roundIndex !== -1 && !isNaN(value)) {
+            game.rounds[roundIndex][player] = value;
+        }
+    });
+
+    localStorage.removeItem(`score-edit-${roundNumber}`);
+    saveGame();
+    updateUI();
+}
+
+// Cancel score column edits
+function cancelScoreColumn(roundNumber) {
+    localStorage.removeItem(`score-edit-${roundNumber}`);
+    updateUI();
 }
