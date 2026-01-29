@@ -207,6 +207,32 @@ function updateUI() {
     updateRoundsHistory();
 }
 
+// Recalculate cumulative scores from all rounds and bonuses
+function recalculateScores() {
+    // Reset scores
+    game.players.forEach(player => {
+        game.scores[player] = 0;
+    });
+
+    // Add scores from all rounds
+    game.rounds.forEach(round => {
+        game.players.forEach(player => {
+            if (round[player] !== undefined) {
+                game.scores[player] += round[player];
+            }
+        });
+    });
+
+    // Add bonuses to scores
+    game.bonuses.forEach(bonus => {
+        const value = bonus.value.replace(/[^0-9-]/g, ''); // Extract number
+        const numValue = parseInt(value);
+        if (!isNaN(numValue)) {
+            game.scores[bonus.player] += numValue;
+        }
+    });
+}
+
 // Update players list
 function updatePlayersList() {
     const playersList = document.getElementById('playersList');
@@ -780,6 +806,7 @@ function saveBonusColumn(roundNumber) {
     });
 
     localStorage.removeItem(`bonus-edit-${roundNumber}`);
+    recalculateScores();
     saveGame();
     updateUI();
 }
@@ -805,6 +832,7 @@ function saveScoreColumn(roundNumber) {
     });
 
     localStorage.removeItem(`score-edit-${roundNumber}`);
+    recalculateScores();
     saveGame();
     updateUI();
 }
