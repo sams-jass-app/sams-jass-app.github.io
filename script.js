@@ -344,17 +344,25 @@ function updateRoundsHistory() {
         return;
     }
 
-    // Create table header with rounds as columns
-    let tableHtml = '<table class="history-table"><thead><tr><th class="player-col"></th>';
-
-    // Get all unique round numbers
+    // Get all unique round numbers that have either bonuses or submitted rounds
     const roundNumbers = new Set();
     game.rounds.forEach(r => roundNumbers.add(r.roundNumber));
+    game.bonuses.forEach(b => roundNumbers.add(b.roundNumber));
     const sortedRounds = Array.from(roundNumbers).sort((a, b) => a - b);
 
-    // Add round headers
+    // Get only submitted rounds
+    const submittedRounds = new Set();
+    game.rounds.forEach(r => submittedRounds.add(r.roundNumber));
+
+    // Create table header with bonuses and rounds as alternating columns
+    let tableHtml = '<table class="history-table"><thead><tr><th class="player-col"></th>';
+
+    // Add bonus and round headers (only show round header if it's submitted)
     sortedRounds.forEach(roundNum => {
-        tableHtml += `<th class="round-col">Rundi ${roundNum}</th>`;
+        tableHtml += `<th class="bonus-col">Wiis ${roundNum}</th>`;
+        if (submittedRounds.has(roundNum)) {
+            tableHtml += `<th class="round-col">Rundi ${roundNum}</th>`;
+        }
     });
 
     tableHtml += '</tr></thead><tbody>';
@@ -363,23 +371,13 @@ function updateRoundsHistory() {
     for (const player of game.players) {
         tableHtml += `<tr><td class="player-col">${player}</td>`;
 
-        // For each round, show the score
+        // For each round, show the bonus and score (if submitted)
         sortedRounds.forEach(roundNum => {
-            const round = game.rounds.find(r => r.roundNumber === roundNum);
-            const score = round && round[player] !== undefined ? round[player] : 0;
-            const roundedScore = Math.ceil(score / 10);
-
-            tableHtml += `<td>${roundedScore}</td>`;
-        });
-
-        tableHtml += '</tr>';
-
-        // Display bonuses row for this player (if any)
-        let playerBonusText = '';
-        sortedRounds.forEach(roundNum => {
+            // Bonus column
             const roundBonuses = game.bonuses.filter(b => b.roundNumber === roundNum && b.player === player);
+            let bonusText = '';
             if (roundBonuses.length > 0) {
-                playerBonusText += roundBonuses.map(bonus => {
+                bonusText = roundBonuses.map(bonus => {
                     const icon = bonus.type === 'handweis' ? '👋' : '🏓';
                     const value = bonus.value.replace('x2', '0');
                     const numValue = parseInt(value);
@@ -387,26 +385,18 @@ function updateRoundsHistory() {
                     return `${icon} ${displayValue}`;
                 }).join(', ');
             }
+            tableHtml += `<td class="bonus-cell">${bonusText}</td>`;
+
+            // Score column (only if round is submitted)
+            if (submittedRounds.has(roundNum)) {
+                const round = game.rounds.find(r => r.roundNumber === roundNum);
+                const score = round && round[player] !== undefined ? round[player] : 0;
+                const roundedScore = Math.ceil(score / 10);
+                tableHtml += `<td>${roundedScore}</td>`;
+            }
         });
 
-        if (playerBonusText || game.bonuses.some(b => b.player === player)) {
-            tableHtml += `<tr class="bonus-row"><td class="player-col bonus-label">Wiis</td>`;
-            sortedRounds.forEach(roundNum => {
-                const roundBonuses = game.bonuses.filter(b => b.roundNumber === roundNum && b.player === player);
-                let bonusText = '';
-                if (roundBonuses.length > 0) {
-                    bonusText = roundBonuses.map(bonus => {
-                        const icon = bonus.type === 'handweis' ? '👋' : '🏓';
-                        const value = bonus.value.replace('x2', '0');
-                        const numValue = parseInt(value);
-                        const displayValue = !isNaN(numValue) ? Math.ceil(numValue / 10) : bonus.value;
-                        return `${icon} ${displayValue}`;
-                    }).join(', ');
-                }
-                tableHtml += `<td class="bonus-cell">${bonusText}</td>`;
-            });
-            tableHtml += '</tr>';
-        }
+        tableHtml += '</tr>';
     }
 
     tableHtml += '</tbody></table>';
