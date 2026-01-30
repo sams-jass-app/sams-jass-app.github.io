@@ -4,111 +4,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jass Molotov Score Tracker</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Jass - Was Jassemer hüt?</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        .home-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            gap: 50px;
+            padding: 20px;
+        }
+
+        .home-title {
+            font-size: 3em;
+            color: #a8d5ba;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .buttons-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 1200px;
+        }
+
+        .game-button {
+            padding: 40px 60px;
+            font-size: 1.8em;
+            font-weight: bold;
+            border: none;
+            border-radius: 15px;
+            background: #4a9d6f;
+            color: #e8e8e8;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            text-decoration: none;
+            display: inline-block;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .game-button:hover {
+            background: #5bb380;
+            box-shadow: 0 15px 40px rgba(74, 157, 111, 0.4);
+            transform: translateY(-5px);
+        }
+
+        .game-button:active {
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 
 <body>
-    <div class="container">
-        <header>
-            <h1>🂱 Molotov 🂱</h1>
-        </header>
-
-        <!-- Score Visualization -->
-        <div class="scores-section">
-            <h2>Zwüschestand</h2>
-            <div class="scores-grid" id="scoresGrid"></div>
-        </div>
-
-        <!-- Score Entry -->
-        <div class="entry-section">
-            <h2>Rundi Hinzuefüege</h2>
-            <div class="round-entry">
-                <label>Rundi #<span id="roundNumber">1</span></label>
-                <div class="bonus-controls">
-                    <div class="bonus-group">
-                        <button onclick="toggleBonusMode('handweis')" id="handweis-btn"
-                            class="bonus-btn handweis-btn">👋
-                            Handwiis</button>
-                        <div id="handweis-dropdown" class="bonus-dropdown" style="display: none;">
-                            <div class="player-selector">
-                                <label>Spieler:</label>
-                                <div class="player-buttons-wrapper">
-                                    <div class="player-buttons" id="handweis-players"></div>
-                                    <button class="double-btn" onclick="toggleDoubleMode('handweis')">2x</button>
-                                </div>
-                            </div>
-                            <div class="points-buttons" id="handweis-points" style="display: none;">
-                                <button onclick="applyBonus('handweis', 20)">-20</button>
-                                <button onclick="applyBonus('handweis', 50)">-50</button>
-                                <button onclick="applyBonus('handweis', 100)">-100</button>
-                                <button onclick="applyBonus('handweis', 150)">-150</button>
-                                <button onclick="applyBonus('handweis', 200)">-200</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bonus-group">
-                        <button onclick="toggleBonusMode('tischweis')" id="tischweis-btn"
-                            class="bonus-btn tischweis-btn">🏓 Tischwiis</button>
-                        <div id="tischweis-dropdown" class="bonus-dropdown" style="display: none;">
-                            <div class="player-selector">
-                                <label>Spieler:</label>
-                                <div class="player-buttons-wrapper">
-                                    <div class="player-buttons" id="tischweis-players"></div>
-                                    <button class="double-btn" onclick="toggleDoubleMode('tischweis')">2x</button>
-                                </div>
-                            </div>
-                            <div class="points-buttons" id="tischweis-points" style="display: none;">
-                                <button onclick="applyBonus('tischweis', 20)">+20</button>
-                                <button onclick="applyBonus('tischweis', 50)">+50</button>
-                                <button onclick="applyBonus('tischweis', 100)">+100</button>
-                                <button onclick="applyBonus('tischweis', 150)">+150</button>
-                                <button onclick="applyBonus('tischweis', 200)">+200</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="points-remaining">
-                    <span>Verbleibendi Pünkt:</span>
-                    <span id="pointsRemaining" class="remaining-value">157</span>
-                </div>
-                <table class="entry-table">
-                    <thead>
-                        <tr id="playerHeaders"></tr>
-                    </thead>
-                    <tbody>
-                        <tr id="scoreInputs"></tr>
-                    </tbody>
-                </table>
-                <button onclick="submitRound()" class="submit-btn">Rundi Speichere</button>
-            </div>
-        </div>
-
-        <!-- Rounds History -->
-        <div class="history-section">
-            <h2>Spiel Verlauf</h2>
-            <div class="history-table-wrapper" id="roundsHistoryWrapper">
-                <div id="roundsHistory"></div>
-            </div>
-        </div>
-
-        <!-- Players Setup -->
-        <div class="setup-section">
-            <h2 onclick="togglePlayersSection()" class="setup-header">⚙️ Istellige</h2>
-            <div id="playersSetup" class="players-setup-content" style="display: none;">
-                <button onclick="resetGame()" class="reset-btn full-width">Spiel Resete</button>
-                <div class="players-input">
-                    <input type="text" id="playerInput" placeholder="Spielername" />
-                    <button onclick="addPlayer()">Spieler Hinzuefüege</button>
-                </div>
-                <div class="players-list">
-                    <div id="playersList"></div>
-                </div>
-            </div>
+    <div class="home-container">
+        <h1 class="home-title">Was Jassemer hüt?</h1>
+        <div class="buttons-container">
+            <button class="game-button" onclick="window.location.href='molotov.html'">Molotov</button>
+            <button class="game-button" onclick="window.location.href='coifeuer.html'">Coiffeur</button>
+            <button class="game-button" onclick="alert('Schieber chunt gli!')">Schieber</button>
         </div>
     </div>
-
-    <script src="script.js"></script>
 </body>
 
 </html>

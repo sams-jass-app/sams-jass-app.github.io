@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jass Coiffeur Score Tracker</title>
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="coifeuer.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-button" title="Back to Home">← zrugg</a>
+            <h1>🂡 Coiffeur 🂡</h1>
+        </header>
+
+        <div class="coifeuer-container">
+            <!-- Teams Section -->
+            <div class="teams-section">
+                <div class="team-card">
+                    <h2 id="team1NameDisplay" onclick="editTeamName(1)" class="team-name-editable">Team 1</h2>
+                    <input type="text" id="team1NameInput" class="team-name-input hidden" placeholder="Team 1 Name"
+                        value="Team 1" onblur="saveTeamName(1)" onkeypress="if(event.key==='Enter') saveTeamName(1)">
+                    <div class="team-score" id="team1Score">0</div>
+                    <div class="team-max-score">Max: <span id="team1MaxScore">0</span></div>
+                </div>
+                <div class="team-card">
+                    <h2 id="team2NameDisplay" onclick="editTeamName(2)" class="team-name-editable">Team 2</h2>
+                    <input type="text" id="team2NameInput" class="team-name-input hidden" placeholder="Team 2 Name"
+                        value="Team 2" onblur="saveTeamName(2)" onkeypress="if(event.key==='Enter') saveTeamName(2)">
+                    <div class="team-score" id="team2Score">0</div>
+                    <div class="team-max-score">Max: <span id="team2MaxScore">0</span></div>
+                </div>
+            </div>
+
+            <!-- Logging Section -->
+            <div class="logging-section">
+                <div id="loggingContainer"></div>
+            </div>
+
+            <!-- Games Table Section -->
+            <div class="games-table-section">
+                <h2>Spielstand</h2>
+                <table class="games-table">
+                    <thead>
+                        <tr>
+                            <th>Jass</th>
+                            <th>Faktor</th>
+                            <th id="team1Header">Team 1</th>
+                            <th id="team2Header">Team 2</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gamesTableBody">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Settings Section -->
+            <div class="settings-section">
+                <h2 onclick="toggleSettings()">⚙️ Istellige</h2>
+                <div id="settingsContent" class="settings-hidden">
+                    <div class="jass-options" id="jassOptions">
+                    </div>
+                    <div class="action-buttons">
+                        <div class="button-group-left">
+                            <button id="reorderBtn" onclick="toggleReorderMode()" class="reorder-btn">Reihenfolge
+                                anpassen</button>
+                            <button onclick="resetGameOrder()" class="reset-btn">Reihenfolge Resete</button>
+                        </div>
+                        <div class="button-group-right">
+                            <button id="editValuesBtn" onclick="toggleEditMode()" class="reorder-btn">Pünkt
+                                ändern</button>
+                            <button onclick="resetGame()" class="reset-btn">Pünkt Löschen</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="coifeuer.js"></script>
+</body>
+
+</html>

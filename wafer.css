@@ -1,0 +1,137 @@
+/* ============================================
+   WAFER VARIANT STYLES
+   ============================================ */
+
+/* This file contains variant-specific styles for Wafer */
+/* Currently using common Molotov-style table structure */
+
+/* Wafer Entry Table is defined in common.css */
+
+.submit-btn:active {
+    transform: translateY(2px);
+}
+
+/* Wafer History Table */
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #3a3a3a;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    min-width: 100%;
+}
+
+.history-table thead {
+    background: #4a9d6f;
+    color: #ffffff;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.history-table th {
+    padding: 12px;
+    text-align: center;
+    font-weight: bold;
+    border-bottom: 2px solid #555;
+    white-space: nowrap;
+}
+
+.history-table td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #555;
+    color: #e8e8e8;
+}
+
+.correct-btn:hover {
+    background: #3d7d59;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(74, 157, 111, 0.3);
+}
+
+.history-table tbody tr:hover {
+    background: #4a4a4a;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .entry-table {
+        display: block;
+        border: none;
+        box-shadow: none;
+    }
+
+    .entry-table thead {
+        display: none;
+    }
+
+    .entry-table tbody {
+        display: grid;
+        gap: 15px;
+    }
+
+    .entry-table tr {
+        display: grid;
+        grid-template-columns: 1fr;
+        background: #3a3a3a;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .entry-table td {
+        border: none;
+        padding: 12px;
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        align-items: center;
+        border-bottom: none;
+    }
+
+    .entry-table td::before {
+        content: attr(data-player);
+        font-weight: bold;
+        color: #a8d5ba;
+        margin-right: 10px;
+    }
+
+    .entry-table input {
+        width: 100%;
+    }
+
+    .history-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 8px;
+    }
+
+    .history-table {
+        min-width: 100%;
+        display: table;
+    }
+
+    .history-table thead {
+        background: #4a9d6f;
+    }
+
+    .history-table th {
+        padding: 10px 8px;
+        font-size: 0.85em;
+    }
+
+    .history-table td {
+        padding: 10px 8px;
+        font-size: 0.9em;
+    }
+
+    .correct-btn {
+        padding: 6px 10px;
+        font-size: 0.8em;
+    }
+
+    .edit-score-input {
+        font-size: 0.85em;
+        padding: 6px;
+    }
+}
