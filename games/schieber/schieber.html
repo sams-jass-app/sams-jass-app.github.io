@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jass Schieber Score Tracker</title>
+    <link rel="stylesheet" href="../../common/css/common.css">
+    <link rel="stylesheet" href="../../common/css/style.css">
+    <link rel="stylesheet" href="schieber.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <a href="../../index.html" class="back-button" title="Back to Home">← zrugg</a>
+            <h1>🃑 Schieber 🃑</h1>
+        </header>
+
+        <div class="schieber-container">
+            <!-- Target Score Section -->
+            <div class="target-score-card">
+                <h3>Zielpunktzahl</h3>
+                <div class="target-score-value" id="targetScoreValue">2500</div>
+            </div>
+
+            <!-- Teams Section -->
+            <div class="teams-section">
+                <div class="team-card">
+                    <div class="team-header">
+                        <h2 id="team1NameDisplay" onclick="editTeamName(1)" class="team-name-editable">Team 1</h2>
+                    </div>
+                    <input type="text" id="team1NameInput" class="team-name-input hidden" placeholder="Team 1 Name"
+                        value="Team 1" onblur="saveTeamName(1)" onkeypress="if(event.key==='Enter') saveTeamName(1)">
+                    <div class="team-score" id="team1Score">0</div>
+                    <div class="team-difference">Verblibend: <span id="team1Diff">2500</span></div>
+
+                </div>
+                <div class="team-card">
+                    <div class="team-header">
+                        <h2 id="team2NameDisplay" onclick="editTeamName(2)" class="team-name-editable">Team 2</h2>
+                    </div>
+                    <input type="text" id="team2NameInput" class="team-name-input hidden" placeholder="Team 2 Name"
+                        value="Team 2" onblur="saveTeamName(2)" onkeypress="if(event.key==='Enter') saveTeamName(2)">
+                    <div class="team-score" id="team2Score">0</div>
+                    <div class="team-difference">Verblibend: <span id="team2Diff">2500</span></div>
+                </div>
+            </div>
+            <!-- Score Entry Section -->
+            <div class="entry-section">
+                <h2>Rundi Hinzuefüege</h2>
+                <div class="round-entry">
+                    <label>Rundi #<span id="roundNumber">1</span></label>
+                    <div class="game-selector">
+                        <label>Jass:</label>
+                        <div id="game-type-buttons" class="game-type-buttons"></div>
+                    </div>
+                    <div class="wiis-team-selector" id="wiisTeamSelector">
+                        <button class="team-wiis-btn" onclick="openWiisForTeam(1)">
+                            <span id="team1-label-wiis">Team 1</span>
+                            <span class="wiis-label">👋 Wiis</span>
+                        </button>
+                        <button class="team-wiis-btn" onclick="openWiisForTeam(2)">
+                            <span id="team2-label-wiis">Team 2</span>
+                            <span class="wiis-label">👋 Wiis</span>
+                        </button>
+                    </div>
+                    <div class="wiis-entry-section hidden" id="wiisEntrySection">
+                        <div class="handwiis-multiplier-section">
+                            <button class="x2-toggle-btn" id="x2ToggleBtn"
+                                onclick="toggleHandwiisMultiplier()">x2</button>
+                        </div>
+                        <div class="handwiis-value-buttons">
+                            <button class="handwii-value-btn" onclick="addHandwiis(20)">20</button>
+                            <button class="handwii-value-btn" onclick="addHandwiis(50)">50</button>
+                            <button class="handwii-value-btn" onclick="addHandwiis(100)">100</button>
+                            <button class="handwii-value-btn" onclick="addHandwiis(200)">200</button>
+                            <button class="handwii-value-btn" onclick="addHandwiis(250)">250</button>
+                        </div>
+                        <button class="cancel-handwiis-btn" onclick="cancelHandwiisSelection()">Cancel</button>
+                    </div>
+                    <div class="score-inputs">
+                        <div class="score-group">
+                            <input type="number" id="team1-score" class="score-input" placeholder="0" min="0" max="257"
+                                oninput="calculateTeam2Score()">
+                        </div>
+                        <div class="score-group">
+                            <input type="number" id="team2-score" class="score-input" placeholder="0" min="0" max="257"
+                                oninput="calculateTeam1Score()">
+                        </div>
+                    </div>
+                    <button onclick="addRound()" class="submit-btn">Rundi Speichere</button>
+                </div>
+            </div>
+
+            <!-- History Table Section -->
+            <div class="history-section">
+                <h2>Spielstand</h2>
+                <div class="table-scroll-wrapper">
+                    <div id="historyTableContainer"></div>
+                </div>
+            </div>
+
+            <!-- Settings Section -->
+            <div class="settings-section">
+                <h2 onclick="toggleSettings()">⚙️ Istellige</h2>
+                <div id="settingsContent" class="settings-hidden">
+                    <div class="card-type-selector">
+                        <label>Deck:</label>
+                        <button onclick="setCardType('german')" id="cardType-german"
+                            class="card-type-btn active">Dütsch</button>
+                        <button onclick="setCardType('french')" id="cardType-french"
+                            class="card-type-btn">Französisch</button>
+                    </div>
+                    <div id="gameTypeOptions" class="game-type-options"></div>
+                    <div class="target-points-input">
+                        <label for="targetPoints">Zielpunktzahl:</label>
+                        <input type="number" id="targetPoints" class="settings-input" value="2500" min="1"
+                            onchange="updateTargetPoints(this.value)">
+                    </div>
+                    <div class="action-buttons">
+                        <button onclick="resetGame()" class="reset-btn">Pünkt Löschen</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="schieber.js"></script>
+</body>
+
+</html>
