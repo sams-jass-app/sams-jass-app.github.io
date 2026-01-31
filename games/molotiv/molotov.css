@@ -1,0 +1,257 @@
+/* ============================================
+   MOLOTOV VARIANT STYLES
+   ============================================ */
+
+/* Entry Table Styles are defined in common.css */
+
+/* Mobile card layout for entry table */
+@media (max-width: 768px) {
+    .entry-table {
+        display: block;
+        border: none;
+        box-shadow: none;
+    }
+
+    .entry-table thead {
+        display: none;
+    }
+
+    .entry-table tbody {
+        display: grid;
+        gap: 15px;
+    }
+
+    .entry-table tr {
+        display: grid;
+        grid-template-columns: 1fr;
+        background: #3a3a3a;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .entry-table td {
+        border: none;
+        padding: 12px;
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        align-items: center;
+        border-bottom: none;
+    }
+
+    .entry-table td::before {
+        content: attr(data-player);
+        font-weight: bold;
+        color: #a8d5ba;
+        margin-right: 10px;
+    }
+
+    .entry-table input {
+        width: 100%;
+    }
+}
+
+.submit-btn:active {
+    transform: translateY(2px);
+}
+
+/* History Table Styles */
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #3a3a3a;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    min-width: 100%;
+}
+
+.history-table thead {
+    background: #4a9d6f;
+    color: #ffffff;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.history-table th {
+    padding: 12px;
+    text-align: center;
+    font-weight: bold;
+    border-bottom: 2px solid #555;
+    white-space: nowrap;
+}
+
+.history-table th.player-col {
+    text-align: left;
+    padding-left: 15px;
+    position: sticky;
+    left: 0;
+    z-index: 11;
+}
+
+.history-table th.round-col {
+    min-width: 100px;
+}
+
+.history-table td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #555;
+    color: #e8e8e8;
+}
+
+.history-table td.player-col {
+    font-weight: bold;
+    background: #2d2d2d;
+    text-align: left;
+    padding-left: 15px;
+    color: #a8d5ba;
+    position: sticky;
+    left: 0;
+    z-index: 5;
+    min-width: 120px;
+}
+
+.history-table td.bonus-cell {
+    color: #c8e6c9;
+    font-style: italic;
+    font-size: 0.85em;
+}
+
+.correct-btn:active {
+    transform: translateY(0);
+}
+
+.edit-bonus-input {
+    width: 60px;
+    padding: 6px;
+    border: 2px solid #4a9d6f;
+    border-radius: 4px;
+    font-size: 0.9em;
+    text-align: center;
+    font-weight: bold;
+    background: #2d2d2d;
+    color: #e8e8e8;
+}
+
+.edit-bonus-input:focus {
+    outline: none;
+    border-color: #3d7d59;
+    box-shadow: 0 0 8px rgba(74, 157, 111, 0.2);
+}
+
+.bonus-label {
+    font-weight: bold;
+    color: #a8d5ba;
+}
+
+.edit-input {
+    width: 100%;
+    padding: 8px;
+    border: 2px solid #4a9d6f;
+    border-radius: 6px;
+    font-size: 0.9em;
+    text-align: center;
+    font-weight: bold;
+    background: #2d2d2d;
+    color: #e8e8e8;
+}
+
+.edit-input:focus {
+    outline: none;
+    border-color: #3d7d59;
+    box-shadow: 0 0 8px rgba(74, 157, 111, 0.2);
+}
+
+.edit-footer-row {
+    background: #2d3d2d;
+    border-top: 2px solid #4a9d6f;
+    font-weight: bold;
+}
+
+.edit-footer-row td {
+    padding: 12px;
+}
+
+.empty-message {
+    text-align: center;
+    color: #666;
+    padding: 20px;
+    font-style: italic;
+}
+
+/* Mobile card layout for history table */
+@media (max-width: 768px) {
+    .history-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 8px;
+    }
+
+    .history-table {
+        min-width: 100%;
+        display: table;
+    }
+
+    .history-table thead {
+        background: #4a9d6f;
+    }
+
+    .history-table th {
+        padding: 10px 8px;
+        font-size: 0.85em;
+    }
+
+    .history-table th.player-col {
+        position: sticky;
+        left: 0;
+        z-index: 12;
+        background: #4a9d6f;
+    }
+
+    .history-table td {
+        padding: 10px 8px;
+        font-size: 0.9em;
+    }
+
+    .history-table td.player-col {
+        position: sticky;
+        left: 0;
+        z-index: 5;
+        min-width: 100px;
+        background: #2d2d2d;
+    }
+
+    .correct-btn {
+        padding: 6px 10px;
+        font-size: 0.8em;
+    }
+
+    .edit-score-input,
+    .edit-bonus-input {
+        font-size: 0.85em;
+        padding: 6px;
+    }
+}
+
+/* Bonus input row styling */
+.bonus-input-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.bonus-input-row:last-child {
+    margin-bottom: 0;
+}
+
+.bonus-input-row input {
+    width: 80px;
+    padding: 6px;
+    border: 1px solid #555;
+    background: #2d2d2d;
+    color: #e8e8e8;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
